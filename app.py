@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -7,10 +7,34 @@ app = Flask(__name__)
 ## Database part
 client = MongoClient('localhost', 27017)
 db = client.Flask_Todo
-todos = db.todo
+todos = db.todo # collection for todo
+user_login = db.Login # collection for Login
 
 
-@app.route('/', methods=('GET', 'POST'))
+def find_or_not(list, ussid, password):
+    for ele in list:
+        if str(ele['ussid'])==ussid and str(ele['password'])==password:
+            return True
+    return False
+
+@app.route("/", methods= ('GET', 'POST'))
+def login():
+    if request.method=="POST":
+        ussid = request.form['ussid']
+        password = request.form['password']
+        get_login = user_login.find()
+        res = list(get_login)
+        check = find_or_not(res, ussid, password)
+        if check==False:
+            # flash('Incorrect Credentials!!')
+            return render_template('login_form.html')
+        else:
+            return redirect(url_for('index'))
+    
+    return render_template('login_form.html')
+
+
+@app.route('/todo', methods=('GET', 'POST'))
 def index():
     if request.method == "POST":
         title = request.form['title']

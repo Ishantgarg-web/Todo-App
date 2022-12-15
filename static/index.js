@@ -1,5 +1,5 @@
 <script>
-    function success_show_Alert(){
-        alert ("Pressed");
+    function success_show_alert(){
+        alert ("Pressed")
     }
 </script>
