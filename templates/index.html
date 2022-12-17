@@ -33,7 +33,11 @@
           </nav>
     </div>
 
-
+    <div class="container">
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+    </div>
 
     <div class="container my-3">
         <form method="POST">

@@ -3,6 +3,8 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from pymongo import MongoClient
 
 app = Flask(__name__)
+app.secret_key="123456tgbgfdw3456ygfdew345tgse45thfdw"
+
 
 ## Database part
 client = MongoClient('localhost', 27017)
@@ -26,7 +28,7 @@ def login():
         res = list(get_login)
         check = find_or_not(res, ussid, password)
         if check==False:
-            # flash('Incorrect Credentials!!')
+            flash('Incorrect Credentials!!')
             return render_template('login_form.html')
         else:
             return redirect(url_for('index'))
@@ -37,9 +39,12 @@ def login():
 @app.route('/todo', methods=('GET', 'POST'))
 def index():
     if request.method == "POST":
-        title = request.form['title']
-        desc = request.form['desc']
-        todos.insert_one({'title': title, 'Description': desc})
+        title = request.form['title'].strip()
+        desc = request.form['desc'].strip()
+        if len(title)>0 and len(desc)>0:
+            todos.insert_one({'title': title, 'Description': desc})
+        else:
+            flash('Please provide valid title and description') 
         return redirect(url_for('index'))
     
     all_todos = todos.find()
